@@ -6,7 +6,8 @@ Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 unzip("activity.zip")
 activity <- read.csv("activity.csv")
 ```
@@ -15,17 +16,32 @@ activity <- read.csv("activity.csv")
 
 1. Make a histogram of the total number of steps taken each day
 
-```{r}
+
+```r
 steps_Date_Data <- aggregate(steps ~ date, data=activity, FUN=sum)
 barplot(steps_Date_Data$steps, names.arg=steps_Date_Data$date, xlab="date", ylab="steps")
 ```
 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
+
 2. Calculate and report the **mean** and **median** total number of
    steps taken per day
 
-```{r}
+
+```r
 mean(steps_Date_Data$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(steps_Date_Data$steps)
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
@@ -34,16 +50,24 @@ median(steps_Date_Data$steps)
    interval (x-axis) and the average number of steps taken, averaged
    across all days (y-axis)
 
-```{r}
+
+```r
 steps_Interval_Data <- aggregate(steps ~ interval, data=activity, FUN=mean)
 plot(steps_Interval_Data, type="l")
 ```
 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+
 2. Which 5-minute interval, on average across all the days in the
    dataset, contains the maximum number of steps?
 
-```{r}
+
+```r
 steps_Interval_Data$interval[which.max(steps_Interval_Data$steps)]
+```
+
+```
+## [1] 835
 ```
 
 
@@ -52,8 +76,13 @@ steps_Interval_Data$interval[which.max(steps_Interval_Data$steps)]
 1. Calculate and report the total number of missing values in the
    dataset (i.e. the total number of rows with `NA`s)
 
-```{r}
+
+```r
 sum(is.na(activity))
+```
+
+```
+## [1] 2304
 ```
 
 2. Devise a strategy for filling in all of the missing values in the
@@ -61,15 +90,21 @@ sum(is.na(activity))
    example, you could use the mean/median for that day, or the mean
    for that 5-minute interval, etc.
 
-```{r}
+
+```r
 mean(na.omit(activity$steps))
+```
+
+```
+## [1] 37.3826
 ```
 
 
 3. Create a new dataset that is equal to the original dataset but with
    the missing data filled in.
 
-```{r}
+
+```r
 activity_new <- activity
 activity_new$steps[is.na(activity_new$steps)] <- mean(na.omit(activity$steps))
 ```
@@ -80,11 +115,28 @@ activity_new$steps[is.na(activity_new$steps)] <- mean(na.omit(activity$steps))
    the first part of the assignment? What is the impact of imputing
    missing data on the estimates of the total daily number of steps?
 
-```{r}
+
+```r
 steps_Date_New_Data <- aggregate(steps ~ date, data=activity_new, FUN=sum)
 barplot(steps_Date_New_Data$steps, names.arg=steps_Date_New_Data$date, xlab="date", ylab="steps")
+```
+
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png) 
+
+```r
 mean(steps_Date_New_Data$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(steps_Date_New_Data$steps)
+```
+
+```
+## [1] 10766.19
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -93,7 +145,8 @@ median(steps_Date_New_Data$steps)
    "weekday" and "weekend" indicating whether a given date is a
    weekday or weekend day.
 
-```{r, cache=TRUE}
+
+```r
 daytype <- function(date) {
     if (weekdays(as.Date(date)) %in% c("Saturday", "Sunday")) {
         "weekend"
@@ -109,7 +162,8 @@ activity$daytype <- as.factor(sapply(activity$date, daytype))
    taken, averaged across all weekday days or weekend days
    (y-axis).
 
-```{r}
+
+```r
 par(mfrow = c(2, 1))
 for (type in c("weekend", "weekday")) {
     steps.type <- aggregate(steps ~ interval, data = activity, subset = activity$daytype == 
@@ -117,3 +171,5 @@ for (type in c("weekend", "weekday")) {
     plot(steps.type, type = "l", main = type)
 }
 ```
+
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png) 
